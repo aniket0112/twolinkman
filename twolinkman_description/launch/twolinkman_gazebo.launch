@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+	<include file="$(find gazebo_ros)/launch/empty_world.launch"/>
+	<param name="robot_description" command="$(find xacro)/xacro.py '$(find twolinkman)/urdf/twolinkman.xacro'" />
+	<node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-param robot_description -urdf -model twolinkman" />
+</launch>

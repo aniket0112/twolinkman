@@ -1,0 +1,165 @@
+<sdf version='1.6'>
+  <model name='twolinkman'>
+    <link name='base_link'>
+      <pose frame=''>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose frame=''>-0.38974 0.36043 0.48342 0 -0 0</pose>
+        <mass>0.46299</mass>
+        <inertia>
+          <ixx>0.046502</ixx>
+          <ixy>-0.0017269</ixy>
+          <ixz>-0.00010818</ixz>
+          <iyy>0.00037389</iyy>
+          <iyz>-0.00064321</iyz>
+          <izz>0.046676</izz>
+        </inertia>
+      </inertial>
+      <collision name='base_link_collision'>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://2linkman.SLDASM/meshes/base_link.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='base_link_visual'>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://2linkman.SLDASM/meshes/base_link.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='fixed_world' type='fixed'>
+      <child>base_link</child>
+      <parent>world</parent>
+    </joint>
+    <link name='rear_link'>
+      <pose frame=''>-0.29855 -0.56013 0.78465 1.0015 -0 0</pose>
+      <inertial>
+        <pose frame=''>-0.02 -0.14397 -0 0 -0 0</pose>
+        <mass>0.3699</mass>
+        <inertia>
+          <ixx>0.0029957</ixx>
+          <ixy>-1.315e-19</ixy>
+          <ixz>4.3443e-21</ixz>
+          <iyy>4.5696e-05</iyy>
+          <iyz>-1.4675e-16</iyz>
+          <izz>0.0030162</izz>
+        </inertia>
+      </inertial>
+      <collision name='rear_link_collision'>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://2linkman.SLDASM/meshes/rear_link.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='rear_link_visual'>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://2linkman.SLDASM/meshes/rear_link.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='rear_joint' type='revolute'>
+      <child>rear_link</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+          <effort>0</effort>
+          <velocity>0</velocity>
+        </limit>
+        <dynamics>
+          <damping>1</damping>
+          <friction>1</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+    <link name='front_link'>
+      <pose frame=''>-0.29855 -0.721842 0.531966 0.910566 -0 0</pose>
+      <inertial>
+        <pose frame=''>-0.019782 -0.167163 -0.000376 0 -0 0</pose>
+        <mass>0.43535</mass>
+        <inertia>
+          <ixx>0.00433589</ixx>
+          <ixy>1.24396e-05</ixy>
+          <ixz>2.01716e-07</ixz>
+          <iyy>6.25229e-05</iyy>
+          <iyz>-2.14612e-05</iyz>
+          <izz>0.00435616</izz>
+        </inertia>
+      </inertial>
+      <collision name='front_link_collision'>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://2linkman.SLDASM/meshes/front_link.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <collision name='front_link_fixed_joint_lump__load_collision_1'>
+        <pose frame=''>-0.01855 -0.29824 -0.002502 -0.86981 1.1271 0.31167</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://2linkman.SLDASM/meshes/load.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name='front_link_visual'>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://2linkman.SLDASM/meshes/front_link.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='front_link_fixed_joint_lump__load_visual_1'>
+        <pose frame=''>-0.01855 -0.29824 -0.002502 -0.86981 1.1271 0.31167</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://2linkman.SLDASM/meshes/load.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='front_joint' type='revolute'>
+      <child>front_link</child>
+      <parent>rear_link</parent>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+          <effort>0</effort>
+          <velocity>0</velocity>
+        </limit>
+        <dynamics>
+          <damping>1</damping>
+          <friction>1</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+  </model>
+</sdf>
