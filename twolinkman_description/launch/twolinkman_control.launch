@@ -1,7 +1,7 @@
 <launch>
 	<rosparam file="$(find twolinkman)/config/twolinkman_control.yaml" command="load"/>
 	<node name="control_spawner" pkg="controller_manager" type="spawner" respawn="false" 
-		output="screen" ns="/twolinkman" args="joint_state_controller rear_joint_position_controller front_joint_position_controller	"/>
+		output="screen" ns="/twolinkman" args="joint_state_controller rear_joint_effort_controller front_joint_effort_controller"/>
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
 		<remap from="/joint_states" to="/twolinkman/joint_states" />
 	</node>
