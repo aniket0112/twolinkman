@@ -1,3 +1,19 @@
+###################################################################################
+# main.py
+# --------------------------------------------------------------------------------- 
+# main routine program to attach controllers on the manipulator.
+# --------------------------------------------------------------------------------
+# How to use?
+# Wait for gazebo screen to be ready before running this script in a terminal 
+# (other than 'roslauncher.py'). By default, joint effort controllers are selected. 
+# PID parameters can be changed in the code when front and rear joint classes are defined.
+# 'front_setpoint' and 'rear_setpoint' are the two angular setpoints of front and
+# rear angle respectively.
+# To change the controller types (effort or position/angle),'twolinkman_control.launch' 
+# roslaunch file in 'twolinkman_description' dir should be modified.
+# End the script by 'Ctrl+C'
+###################################################################################
+
 import roslaunch, rospy, time, keyboard
 import rospkg as rp
 import numpy as np
@@ -13,8 +29,8 @@ pi = 3.1415926
 front_setpoint = -45
 rear_setpoint = 35
 
-f_topic = '/twolinkman/front_joint_effort_controller/command'
-r_topic = '/twolinkman/rear_joint_effort_controller/command'
+f_topic = '/twolinkman/front_joint_effort_controller/command'         #topic name for front joint controller
+r_topic = '/twolinkman/rear_joint_effort_controller/command'          #topic name for rear joint controller
 rcon_launch_path = '/launch/twolinkman_control.launch'
 rp = rp.RosPack()
 package_path = rp.get_path('twolinkman')
@@ -42,19 +58,18 @@ class PID:
 #ROS Control Launch file
 rcon_uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
 roslaunch.configure_logging(rcon_uuid)
-rcon_launch = roslaunch.parent.ROSLaunchParent(rcon_uuid, [package_path+rcon_launch_path])
+rcon_launch = roslaunch.parent.ROSLaunchParent(rcon_uuid, [package_path+rcon_launch_path])  #roslaunch the ros+gazebo controller
 rcon_launch.start()
-time.sleep(10)
-#Environment ready-->
+time.sleep(5)
+
 if __name__ == '__main__':
     try:
-    #SetPoint Node
         front_joint = Joint(f_topic,None)
         rear_joint = Joint(r_topic,None)
         front_PID = PID(0.1,0.0,0)
         rear_PID = PID(0.1,0.0,0)
 
-        def listener_callback(data):
+        def listener_callback(data):                                  #listeners to topic messages when published to get angle feedback values
             global front_angle, rear_angle
             quatf = data.transforms[0].transform.rotation
             quatr = data.transforms[1].transform.rotation
@@ -64,6 +79,8 @@ if __name__ == '__main__':
             rear_angle = rear_angle*180/pi
             #rospy.loginfo('Front angle: '+str(front_angle)+' Rear angle: '+str(rear_angle))    
 
+        #new rosnode to publish effort messages from script to ros+gazebo control and latch messages
+        #from listeners
         setpointnode = rospy.init_node('SetPoint',anonymous=True)
         front_joint.pub = rospy.topics.Publisher(front_joint.topic,Float64,queue_size=10)
         rear_joint.pub = rospy.topics.Publisher(rear_joint.topic,Float64,queue_size=10)
@@ -74,6 +91,7 @@ if __name__ == '__main__':
 
         fig, ax = plt.subplots()
 
+        #PID loop
         while not rospy.is_shutdown():
             time.sleep(0.001);
             front_joint.pub.publish(front_PID.pid(front_setpoint,front_angle));
