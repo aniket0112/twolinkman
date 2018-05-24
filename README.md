@@ -36,7 +36,7 @@ If you the rospackage location is not displayed, please contact the collaborator
 ## Authors
 * [Aniket Sharma](https://github.com/aniket0112)
 * [Bhavik Parmar](https://github.com/parmarbhavik)
-* Sagar Malik
+* [Sagar Malik](https://github.com/maliksagar96)
 
 ## Acknowledgements
 Hearty thanks to Dr. S. N. Sharma for pointing out useful resources to refer to while working on this project. Deep gratitutde towards the mechanical team of the project for developing the experimental setup to test control schemes. 
