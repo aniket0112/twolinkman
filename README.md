@@ -34,8 +34,8 @@ If you the rospackage location is not displayed, please contact the collaborator
 * [Python 2.7](https://anaconda.org/) - Python interface for coding custom controllers
 
 ## Authors
-* [Aniket Sharma] (https://github.com/aniket0112)
-* [Bhavik Parmar] (https://github.com/parmarbhavik)
+* [Aniket Sharma](https://github.com/aniket0112)
+* [Bhavik Parmar](https://github.com/parmarbhavik)
 * Sagar Malik
 
 ## Acknowledgements
