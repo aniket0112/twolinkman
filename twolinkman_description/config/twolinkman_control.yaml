@@ -3,10 +3,10 @@ twolinkman:
    type: joint_state_controller/JointStateController
    publish_rate: 50
   rear_joint_effort_controller:
-   type: effort_controllers/JointEffortController
+   type: effort_controllers/JointVelocityController
    joint: rear_joint
    pid: {p: 1.0, i: 0.00, d: 0.0}
   front_joint_effort_controller:
-   type: effort_controllers/JointEffortController
+   type: effort_controllers/JointVelocityController
    joint: front_joint
    pid: {p: 1.0, i: 0.00, d: 0.0}
