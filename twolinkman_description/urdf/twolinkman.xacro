@@ -7,98 +7,98 @@
 	  <child link="base_link"/>
 	</joint>
 	<link
-		name="base_link">
-		<inertial>
-		  <origin
-		    xyz="0.019321 0.56657 -0.012593"
-		    rpy="0 0 0" />
-		  <mass
-		    value="0.46299" />
-		  <inertia
-		    ixx="0.046499"
-		    ixy="-0.0017672"
-	      ixz="-9.1379E-05"
-		    iyy="0.00036871"
-		    iyz="-0.00018866"
-		    izz="0.046684" />
-		</inertial>
-		<visual>
-		  <origin
-		    xyz="0 0 0"
-		    rpy="0 0 0" />
-		  <geometry>
-		    <mesh
-		      filename="package://twolinkman/meshes/base_link.STL" />
-		  </geometry>
-		  <material
-		    name="">
-		    <color
-		      rgba="0.79216 0.81961 0.93333 1" />
-		  </material>
-		</visual>
-		<collision>
-		  <origin
-		    xyz="0 0 0"
-		    rpy="0 0 0" />
-		  <geometry>
-		    <mesh
-		      filename="package://twolinkman/meshes/base_link.STL" />
-		  </geometry>
-		</collision>
-	</link>
-	<link
-		name="rear_link">
-		<inertial>
-		  <origin
-		    xyz="0.019988 -0.14397 -1.1768E-14"
-		    rpy="0 0 0" />
-		  <mass
-		    value="0.3699" />
-		  <inertia
-		    ixx="0.0029957"
-		    ixy="-3.1365E-19"
-		    ixz="6.2886E-20"
-		    iyy="4.5696E-05"
-		    iyz="-1.5495E-16"
-		    izz="0.0030162" />
-		</inertial>
-		<visual>
-		  <origin
-		    xyz="0 0 0"
-		    rpy="0 0 0" />
-		  <geometry>
-		    <mesh
-		      filename="package://twolinkman/meshes/rear_link.STL" />
-		  </geometry>
-		  <material
-		    name="">
-		    <color
-		      rgba="0.75294 0.75294 0.75294 1" />
-		  </material>
-		</visual>
-		<collision>
-		  <origin
-		    xyz="0 0 0"
-		    rpy="0 0 0" />
-		  <geometry>
-		    <mesh
-		      filename="package://twolinkman/meshes/rear_link.STL" />
-		  </geometry>
-		</collision>
-	</link>
-	<joint
-		name="rear_joint"
-		type="revolute">
-		<origin
-		  xyz="0.070888 -0.059956 0.99148"
-		  rpy="0.69675 0.00085216 4.9911E-05" />
-		<parent
-		  link="base_link" />
-		<child
-		  link="rear_link" />
-		<axis
-		  xyz="1 0 0" />
-		<limit
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.019321 0.56657 -0.012593"
+        rpy="0 0 0" />
+      <mass
+        value="0.46299" />
+      <inertia
+        ixx="0.046499"
+        ixy="-0.0017672"
+        ixz="-9.1379E-05"
+        iyy="0.00036871"
+        iyz="-0.00018866"
+        izz="0.046684" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://twolinkman/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://twolinkman/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="rear_link">
+    <inertial>
+      <origin
+        xyz="0.02 -0.14397 -1.2421E-14"
+        rpy="0 0 0" />
+      <mass
+        value="0.3699" />
+      <inertia
+        ixx="0.0029957"
+        ixy="1.4341E-18"
+        ixz="5.0293E-21"
+        iyy="4.5696E-05"
+        iyz="-1.561E-16"
+        izz="0.0030162" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://twolinkman/meshes/rear_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://twolinkman/meshes/rear_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rear_joint"
+    type="revolute">
+    <origin
+      xyz="0.070875 -0.059956 0.99148"
+      rpy="1.5648 0.00085216 4.9911E-05" />
+    <parent
+      link="base_link" />
+    <child
+      link="rear_link" />
+    <axis
+      xyz="1 0 0" />
+				<limit
 		  effort="500"
 		  velocity="0.5" 
 			lower="-1.78"
@@ -106,60 +106,60 @@
 		<dynamics
 		  damping="0.1"
 		  friction="0.1" />
-	</joint>
-	<link
-		name="front_link">
-		<inertial>
-		  <origin
-		    xyz="0.019988 -0.14397 -1.199E-14"
-		    rpy="0 0 0" />
-		  <mass
-		    value="0.3699" />
-		  <inertia
-		    ixx="0.0029957"
-		    ixy="-1.2665E-18"
-		    ixz="5.7023E-20"
-		    iyy="4.5696E-05"
-		    iyz="-1.5498E-16"
-		    izz="0.0030162" />
-		</inertial>
-		<visual>
-		  <origin
-		    xyz="0 0 0"
-		    rpy="0 0 0" />
-		  <geometry>
-		    <mesh
-		      filename="package://twolinkman/meshes/front_link.STL" />
-		  </geometry>
-		  <material
-		    name="">
-		    <color
-		      rgba="0.75294 0.75294 0.75294 1" />
-		  </material>
-		</visual>
-		<collision>
-		  <origin
-		    xyz="0 0 0"
-		    rpy="0 0 0" />
-		  <geometry>
-		    <mesh
-		      filename="package://twolinkman/meshes/front_link.STL" />
-		  </geometry>
-		</collision>
-	</link>
-	<joint
-		name="front_joint"
-		type="revolute">
-		<origin
-		  xyz="0 -0.3 0"
-		  rpy="0.21385 -8.9754E-16 4.6663E-16" />
-		<parent
-		  link="rear_link" />
-		<child
-		  link="front_link" />
-		<axis
-		  xyz="1 0 0" />
-		<limit
+  </joint>
+  <link
+    name="front_link">
+    <inertial>
+      <origin
+        xyz="0.02 -0.14397 -1.2143E-14"
+        rpy="0 0 0" />
+      <mass
+        value="0.3699" />
+      <inertia
+        ixx="0.0029957"
+        ixy="5.8392E-19"
+        ixz="-1.3711E-20"
+        iyy="4.5696E-05"
+        iyz="-1.5635E-16"
+        izz="0.0030162" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://twolinkman/meshes/front_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://twolinkman/meshes/front_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="front_joint"
+    type="revolute">
+    <origin
+      xyz="0 -0.3 0"
+      rpy="-0.011862 1.7957E-17 3.889E-16" />
+    <parent
+      link="rear_link" />
+    <child
+      link="front_link" />
+    <axis
+      xyz="1 0 0" />
+    <limit
 		  effort="500"
 		  velocity="0.5" 
 			lower="-1.78"
@@ -167,60 +167,60 @@
 		<dynamics
 		  damping="0.1"
 		  friction="0.1" />
-	</joint>
-	<link
-		name="load_link">
-		<inertial>
-		  <origin
-		    xyz="0 0 0"
-		    rpy="0 0 0" />
-		  <mass
-		    value="0.06545" />
-		  <inertia
-		    ixx="1.6362E-05"
-		    ixy="4.2352E-22"
-		    ixz="-1.2705E-21"
-		    iyy="1.6362E-05"
-		    iyz="4.2352E-22"
-		    izz="1.6362E-05" />
-		</inertial>
-		<visual>
-		  <origin
-		    xyz="0 0 0"
-		    rpy="0 0 0" />
-		  <geometry>
-		    <mesh
-		      filename="package://twolinkman/meshes/load_link.STL" />
-		  </geometry>
-		  <material
-		    name="">
-		    <color
-		      rgba="0.79216 0.81961 0.93333 1" />
-		  </material>
-		</visual>
-		<collision>
-		  <origin
-		    xyz="0 0 0"
-		    rpy="0 0 0" />
-		  <geometry>
-		    <mesh
-		      filename="package://twolinkman/meshes/load_link.STL" />
-		  </geometry>
-		</collision>
-	</link>
-	<joint
-		name="load_joint"
-		type="fixed">
-		<origin
-		  xyz="0.0214379039827525 -0.298236809141598 -0.0025016001689262"
-		  rpy="-0.869812459688269 1.12712986554848 0.311668627798869" />
-		<parent
-		  link="front_link" />
-		<child
-		  link="load_link" />
-		<axis
-		  xyz="0 0 0" />
-	</joint>
+  </joint>
+  <link
+    name="load_link">
+    <inertial>
+      <origin
+        xyz="-1.3878E-17 -2.7756E-17 -5.5511E-17"
+        rpy="0 0 0" />
+      <mass
+        value="0.06545" />
+      <inertia
+        ixx="1.6362E-05"
+        ixy="-4.2352E-22"
+        ixz="0"
+        iyy="1.6362E-05"
+        iyz="-1.0588E-22"
+        izz="1.6362E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://twolinkman/meshes/load_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://twolinkman/meshes/load_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="load_joint"
+    type="fixed">
+    <origin
+      xyz="0.02145 -0.29824 -0.0025016"
+      rpy="-0.86981 1.1271 0.31167" />
+    <parent
+      link="front_link" />
+    <child
+      link="load_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
 	<transmission name="rear_tran">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="rear_joint">
