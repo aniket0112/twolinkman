@@ -5,6 +5,7 @@ Two Link Manipulator control in ROS
 
 ### Prerequisites
 * [ROS Kinetic](http://wiki.ros.org/kinetic/Installation/Ubuntu) with Gazebo-7 (Desktop-Full Install)
+* [Anaconda](https://www.anaconda.com/download/) with Python 2.7 version
 
 ### Installing
 * Clone the repository to the local machine and change the working branch to 'ctc' *OR* download the .zip file of this branch
@@ -44,6 +45,7 @@ NOTE : While running the python files, module import errors may occur. Keep inst
 * [SolidWorks](http://www.solidworks.in/Default.htm) - 3D CAD model
 * [ROS Kinetic](http://wiki.ros.org/kinetic) - ROS control node
 * [Gazebo 7](http://gazebosim.org/) - Simulation environment
+* [Python 2.7](https://anaconda.org/) - Python interface for easy UI
 
 ## Authors
 * [Aniket Sharma](https://github.com/aniket0112)
