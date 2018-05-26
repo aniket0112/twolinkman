@@ -18,7 +18,27 @@ If the rospackage location is not displayed, please contact the collaborators.
 * Open a terminal and type ```roslaunch twolinkman twolinkman_gazebo.launch```. A Gazebo world should be loaded with a two link manipulator at the center. Minimize this terminal.
 * Open another terminal and type ```roslaunch twolinkman twolinkman_control.launch```. After several logging prints, the logging should stop at ```Started controllers: joint_state_controller, rear_joint_effort_controller, front_joint_effort_controller```. Minimize this terminal.
 * Open another terminal and type ```rostopic pub /twolinkman/front_joint_effort_controller/command std_msgs/Float64 "data: 1.0"```. This should move the front link of the two link manipulator in Gazebo world. Similarly try to change values of the topics by using ```rostopic pub``` and monitor angles using ```rostopic echo```
-*NOTE* : If anything is logged in red color while running any of the above commands, there has been some error. Contact collaborators in such case with the log messages.
+*NOTE* : If anything is logged in red color while running any of the above commands, there has been some error. Contact collaborators in such 
+case with the log messages.
+
+### Python interface
+* Navigate to Python directory in the repository and open a terminal.
+* Type python roslauncher.py. The same world should be spawned in Gazebo as twolinkman_gazebo.launch file. Minimize the terminal
+* Open a new terminal at same location and type python main.py. Logging as in twolinkman_control.launch file will be printed, followed by the Gazebo model which will move to desired joint angles and plotting a graph of current and desired joint angles.
+* Feel free to look into main.py to change setpoints, gains, frequencies or complete controller. 
+NOTE : While running the python files, module import errors may occur. Keep installing the missing modules using pip. If the problem persists, contact collaborators.
+
+## Making dataset
+* If the setup has passed the tests mentioned in the above section, you can start collecting dataset for your manipulator model.
+* Run the ```roslauncher.py``` and ```main.py``` scripts. The ```main.py``` scripts ends with a prompt requiring input of angle setpoints. Enter angles and the plotting will show the reponse along with performance measurements.
+* The prompt pops up every 3 seconds.
+* The dynamic reconfiguration of PID parameters can be done using ```rqt```.
+* Open a new terminal and type ```rqt```.
+* From the menu bar, go to ```Plugins > Configuration > Dynamic Reconfigure```
+* Select the controller which you want to tune and adjust PID parameters by typing in the textbox or scrolling the bars and press Enter.
+* This enables live PID tuning during simulation of the manipulator.
+
+*NOTE*: A more user friendly interface is under development.
 
 ## Built with
 * [SolidWorks](http://www.solidworks.in/Default.htm) - 3D CAD model
