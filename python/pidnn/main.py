@@ -139,9 +139,9 @@ if __name__ == '__main__':
                 rt_f = pm_f.riseTime(front_angle)
                 os_r = pm_r.overshoot(rear_angle)
                 rt_r = pm_r.riseTime(rear_angle)
-                if os_f is not -1 and overshoot_f is -1:
+                if os_f is not -1 and overshoot_f is -1 and rise_time_f is not -1:
                     overshoot_f = os_f
-                if os_r is not -1 and overshoot_r is -1:
+                if os_r is not -1 and overshoot_r is -1 and rise_time_r is not -1:
                     overshoot_r = os_r
                 if rt_f is not -1 and rise_time_f is -1:
                     rise_time_f = rt_f
@@ -156,7 +156,7 @@ if __name__ == '__main__':
         def user_input():
             global front_setpoint, rear_setpoint, lock, overshoot_r, overshoot_f, rise_time_r, rise_time_f
             global front_joint, rear_joint
-            print('Input value should be between -180 to 180, type "RESET" (with double quotes) to reset')
+            print('REAR ANGLE = [-170 to -10], FRONT ANGLE = [-170 to 170]. Type "RESET" (with double quotes) to reset')
             front_setpoint_ = input("Front Setpoint:")
             if front_setpoint_ == 'RESET':
                 lock.acquire()
@@ -175,7 +175,8 @@ if __name__ == '__main__':
                     lock.release()
             else:
                 rear_setpoint_ = input("Rear Setpoint:")
-                if isinstance(front_setpoint_,(float,int)) and abs(front_setpoint_ ) <= 180 and isinstance(rear_setpoint_,(float,int)) and abs(rear_setpoint_) <= 180:
+                if (isinstance(front_setpoint_,(float,int)) and abs(front_setpoint_) <= 170
+                    and isinstance(rear_setpoint_,(float,int)) and rear_setpoint_ >= -170 and rear_setpoint_ <= -10):
                     lock.acquire()
                     try:
                         front_setpoint = front_setpoint_
