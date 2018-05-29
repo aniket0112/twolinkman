@@ -20,6 +20,7 @@ import numpy as np
 from std_msgs.msg import Float64
 from tf2_msgs.msg import TFMessage
 from tf.transformations import euler_from_quaternion
+from gazebo_msgs.srv import GetLinkState 
 import matplotlib.pyplot as plt
 import time
 import threading
@@ -36,8 +37,8 @@ rcon_launch_path = '/launch/twolinkman_control.launch'
 rp = rp.RosPack()
 package_path = rp.get_path('twolinkman')
 
-front_link_length = 0.3
-rear_link_length = 0.3
+front_link_length = 0.3035
+rear_link_length = 0.3035
 
 def trajectory_generation(t):
     return -0.4*(1-np.exp(-0.125*t)), (1-np.exp(-0.125*t))*-0.4+np.exp(-0.125*t)*-0.6
@@ -72,11 +73,17 @@ if __name__ == '__main__':
         #Variables used for plotting setpoint and process values
         plt_front_angle = deque([]);
         plt_rear_angle = deque([]);
+        plt_ros_front_angle = deque([]);
+        plt_ros_rear_angle = deque([]);
         plt_x = deque([])
         plt_y = deque([])
+        plt_ros_x = deque([])
+        plt_ros_y = deque([])
         fig, ax = plt.subplots(nrows=2)
         global_x = 0
-        global_y = -0.6
+        global_y = -0.607
+        ros_x = 0
+        ros_y = -0.607
         lock = threading.Lock()                                                                 #Thread lock to avoid data corruption
 
         def listener_callback(data):                                                            #Listeners to topic messages when published to get angle feedback values
@@ -105,7 +112,21 @@ if __name__ == '__main__':
             timer = threading.Timer(0.01,controller)
             timer.setDaemon(True)
             timer.start()        
-
+        def rosservice_client():
+            global ros_x, ros_y, lock
+            lock.acquire()
+            try:
+                rospy.wait_for_service('/gazebo/get_link_state')
+                model = rospy.ServiceProxy('/gazebo/get_link_state',GetLinkState)
+                obj = model("twolinkman::load_link","world")
+                ros_y = obj.link_state.pose.position.z-1.00
+                ros_x = -(obj.link_state.pose.position.y+0.057904731758301235)
+                print(ros_x,ros_y)
+            finally:
+                lock.release()
+            timer = threading.Timer(0.5,rosservice_client)
+            timer.setDaemon(True)
+            timer.start()        
         #new rosnode to publish effort messages from script to ros+gazebo control and latch messages
         #from listeners
         setpointnode = rospy.init_node('SetPoint',anonymous=True)
@@ -114,10 +135,14 @@ if __name__ == '__main__':
         listener = rospy.topics.Subscriber('/tf',TFMessage,callback=listener_callback,queue_size = 10)
         time.sleep(2)
 
-        timer = threading.Timer(0.01,controller)                                                   #Parallel thread to transmit angular velocities and Plotting graphs parallely
+        timer = threading.Timer(0.01,controller)                                                   #Parallel thread to publish setpoints
         timer.setDaemon(True)
         initial_time = time.time()
-        timer.start()                                                                           #Start thread
+        timer.start()                                                                              #Start thread
+
+        timer_ = threading.Timer(0.5,rosservice_client)                                                   #Parallel thread to listen to end-effector coordinates
+        timer_.setDaemon(True)
+        timer_.start()                                                                              #Start thread
         
         #PID loop
         while not rospy.is_shutdown():
@@ -126,15 +151,27 @@ if __name__ == '__main__':
             try:
                 #Plotting routine
                 if(len(plt_front_angle) < 20) :
-                    plt_front_angle.append(front_angle);
+                    plt_front_angle.append(front_setpoint);
                 else:
                     plt_front_angle.rotate(-1);
-                    plt_front_angle[19] = front_angle;
+                    plt_front_angle[19] = front_setpoint;
                 if(len(plt_rear_angle) < 20) :
-                    plt_rear_angle.append(rear_angle);
+                    plt_rear_angle.append(rear_setpoint);
                 else:
                     plt_rear_angle.rotate(-1);
-                    plt_rear_angle[19] = rear_angle;
+                    plt_rear_angle[19] = rear_setpoint;
+
+                if(len(plt_ros_front_angle) < 20) :
+                    plt_ros_front_angle.append(front_angle);
+                else:
+                    plt_ros_front_angle.rotate(-1);
+                    plt_ros_front_angle[19] = front_angle;
+                if(len(plt_ros_rear_angle) < 20) :
+                    plt_ros_rear_angle.append(rear_angle);
+                else:
+                    plt_ros_rear_angle.rotate(-1);
+                    plt_ros_rear_angle[19] = rear_angle;
+                
                 if(len(plt_x) < 20) :
                     plt_x.append(global_x);
                 else:
@@ -146,20 +183,30 @@ if __name__ == '__main__':
                     plt_y.rotate(-1);
                     plt_y[19] = global_y;
 
+                if(len(plt_ros_x) < 20) :
+                    plt_ros_x.append(ros_x);
+                else:
+                    plt_ros_x.rotate(-1);
+                    plt_ros_x[19] = ros_x;
+                if(len(plt_ros_y) < 20) :
+                    plt_ros_y.append(ros_y);
+                else:
+                    plt_ros_y.rotate(-1);
+                    plt_ros_y[19] = ros_y;
+
                 ax[0].cla()
                 ax[0].set_xlim([0,20])
                 ax[0].set_ylim([-150,150])
                 plt_time = [i for i in range(len(plt_front_angle))]
-                plt_front_set_angle = [front_setpoint for i in range(len(plt_front_angle))]
-                plt_rear_set_angle = [rear_setpoint for i in range(len(plt_rear_angle))]
-                ax[0].plot(plt_time,plt_front_angle,'r',plt_time,plt_rear_angle,'b',
-                  plt_time,plt_front_set_angle,'r+',plt_time,plt_rear_set_angle,'b+')
+                ax[0].plot(plt_time,plt_ros_front_angle,'r',plt_time,plt_ros_rear_angle,'b',
+                    plt_time,plt_front_angle,'r+',plt_time,plt_rear_angle,'b+')
                 ax[1].cla()
                 ax[1].set_xlim([0,20])
                 ax[1].set_ylim([0,-1])
-                ax[1].plot(plt_time,plt_x,'r',plt_time,plt_y,'g')
+                ax[1].plot(plt_time,plt_ros_x,'r',plt_time,plt_ros_y,'b',
+                    plt_time,plt_x,'r+',plt_time,plt_y,'b+')
                 ax[0].legend(['Front Angle PV','Rear Angle PV', 'Front Angle SP', 'Rear Angle SP'])
-                ax[1].legend(['X','Y'])
+                ax[1].legend(['X (actual)','Y (actual)','X','Y'])
                 plt.pause(0.0000001)
                 pass
             finally:
