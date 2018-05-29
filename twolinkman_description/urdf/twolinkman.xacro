@@ -210,7 +210,7 @@
   </link>
   <joint
     name="load_joint"
-    type="fixed">
+    type="revolute">
     <origin
       xyz="0.02145 -0.29824 -0.0025016"
       rpy="-0.86981 1.1271 0.31167" />
@@ -219,7 +219,12 @@
     <child
       link="load_link" />
     <axis
-      xyz="0 0 0" />
+      xyz="0 0 1" />
+		<limit
+		  effort="0"
+		  velocity="0" 
+			lower="0"
+      upper="0"/>
   </joint>
 	<transmission name="rear_tran">
     <type>transmission_interface/SimpleTransmission</type>
