@@ -39,6 +39,9 @@ package_path = rp.get_path('twolinkman')
 front_link_length = 0.3
 rear_link_length = 0.3
 
+def trajectory_generation(t):
+    return -0.4*(1-np.exp(-0.125*t)), (1-np.exp(-0.125*t))*-0.4+np.exp(-0.125*t)*-0.6
+
 def inverseKinematics(x,y):
     global front_link_length, rear_link_length
     d = np.sqrt(x**2+y**2)
@@ -53,58 +56,6 @@ class Joint:
         self.topic = topic
         self.pub = setpoint
 
-class PID:
-    e = 0
-    E = 0
-    ep = 0
-    tol = 0.1
-    def __init__(self,kp = 0,ki = 0,kd = 0,tol = 0.1):
-        self.kp = kp
-        self.ki = ki
-        self.kd = kd
-    def pid(self, setpoint, process_value):
-        self.e = setpoint-process_value
-        self.E = self.E + self.e
-        ed = self.e - self.ep
-        self.ep = self.e
-        return (self.kp*self.e+self.kd*ed+self.ki*self.E)
-    def within_limits(self):
-        if abs(self.e) < self.tol:
-            return True
-        else:
-            return False
-
-class PerformanceMeasure:
-    os = 0
-    rise_time = 0
-    pv = deque([0,0,0])
-    setpoint = 1
-    initial_time = time.time()
-    def overshoot(self,process_value):
-        self.pv.rotate(-1)
-        self.pv[2] = process_value
-        if (self.pv[1] > self.pv[0] and self.pv[1] > self.pv[2]) or (self.pv[1] < self.pv[0] and self.pv[1] < self.pv[2]) and self.setpoint is not 0:
-            #return abs((self.pv[1] - self.setpoint)/self.setpoint)*100
-            return 0
-        else:
-            return -1
-    def riseTime(self,process_value):
-        if self.setpoint >= 0:
-            if process_value > self.setpoint*0.9:
-                return (time.time() - self.initial_time)
-            else:
-                return -1
-        else:
-            if process_value < self.setpoint*0.9:
-                return (time.time() - self.initial_time)
-            else:
-                return -1
-    def reset(self,setpoint_):
-        self.os = 0
-        self.rise_time = 0
-        self.pv = deque([0,0,0])
-        self.setpoint = setpoint_
-        self.initial_time = time.time()
 #ROS Control Launch file
 rcon_uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
 roslaunch.configure_logging(rcon_uuid)
@@ -118,30 +69,15 @@ if __name__ == '__main__':
         #Joint instances
         front_joint = Joint(f_topic,None)
         rear_joint = Joint(r_topic,None)
-        #PID instances
-        pid_f = PID(0.04,0.01,0.001,3)
-        pid_r = PID(0.04,0.01,0.002,3)
-        #Performance measure instances
-        pm_f = PerformanceMeasure()
-        pm_r = PerformanceMeasure()
-        pm_f.reset(front_setpoint)
-        pm_r.reset(rear_setpoint)
         #Variables used for plotting setpoint and process values
         plt_front_angle = deque([]);
         plt_rear_angle = deque([]);
-        plt_der_front_angle = deque([]);
-        plt_der_rear_angle = deque([]);
-        fig, ax = plt.subplots()
+        plt_x = deque([])
+        plt_y = deque([])
+        fig, ax = plt.subplots(nrows=2)
+        global_x = 0
+        global_y = -0.6
         lock = threading.Lock()                                                                 #Thread lock to avoid data corruption
-        overshoot_f = -1
-        overshoot_r = -1
-        rise_time_f = -1
-        rise_time_r = -1        
-
-        #Trajectory definition
-        y_desired = [-0.4 for i in range(10)]
-        x_desired = np.linspace(-0.2,0.2,10)
-        trajectory_point = 0
 
         def listener_callback(data):                                                            #Listeners to topic messages when published to get angle feedback values
             global front_angle, rear_angle
@@ -153,67 +89,22 @@ if __name__ == '__main__':
             rear_angle = np.rad2deg(np.arctan2(np.sin(rear_angle+pi),np.cos(rear_angle+pi)))    #Adjustments to make angular measurements from +ve x axis
         def controller():
             #Update setpoints
-            global exit_, lock, trajectory_point, x_desired
-            global front_setpoint, front_angle, rear_setpoint, rear_angle, overshoot_r, overshoot_f, rise_time_r, rise_time_f
+            global exit_, lock, initial_time, global_x, global_y
+            global front_setpoint, front_angle, rear_setpoint, rear_angle
             lock.acquire()
-#            print('Front process value: '+str(front_angle)+' and Rear process value: '+str(rear_angle))
             try:
-                front_joint.pub.publish(pid_f.pid(front_setpoint,front_angle))
-                rear_joint.pub.publish(pid_r.pid(rear_setpoint,rear_angle))
-                os_f = pm_f.overshoot(front_angle)
-                rt_f = pm_f.riseTime(front_angle)
-                os_r = pm_r.overshoot(rear_angle)
-                rt_r = pm_r.riseTime(rear_angle)
-                if os_f is not -1 and overshoot_f is -1 and rise_time_f is not -1:
-                    overshoot_f = os_f
-                if os_r is not -1 and overshoot_r is -1 and rise_time_r is not -1:
-                    overshoot_r = os_r
-                if rt_f is not -1 and rise_time_f is -1:
-                    rise_time_f = rt_f
-                if rt_r is not -1 and rise_time_r is -1:
-                    rise_time_r = rt_r
-                
-                if pid_f.within_limits() is True and pid_r.within_limits() is True:             #Setpoint update
-                    if trajectory_point < len(x_desired) - 1:
-                        trajectory_point = trajectory_point + 1
-                        pm_f.reset(front_setpoint)
-                        pm_r.reset(rear_setpoint)
-                        overshoot_f = -1
-                        overshoot_r = -1
-                        rise_time_f = -1
-                        rise_time_r = -1
+                global_x,global_y = trajectory_generation(time.time()-initial_time)
+                front_setpoint,rear_setpoint = inverseKinematics(global_x,global_y)   #Calculate joint angles
+                if (abs(front_setpoint) <= 170 and rear_setpoint >= -170 and rear_setpoint <= -10):                        #Check limits of angular positions
+                    front_joint.pub.publish(np.deg2rad(front_setpoint))
+                    rear_joint.pub.publish(np.deg2rad(rear_setpoint+90))
+                else:
+                    print('Out of bounds!')                   
             finally:
                 lock.release()
-            timer = threading.Timer(0.02,controller)
+            timer = threading.Timer(0.01,controller)
             timer.setDaemon(True)
-            if exit_ is False:
-                timer.start()
-
-        def trajectory_update():
-            global front_setpoint, rear_setpoint, lock, overshoot_r, overshoot_f, rise_time_r, rise_time_f
-            global front_joint, rear_joint, x_desired, y_desired, trajectory_point
-            front_setpoint_,rear_setpoint_ = inverseKinematics(x_desired[trajectory_point],y_desired[trajectory_point])   #Calculate joint angles
-            print('Front setpoint: '+str(front_setpoint_)+' and Rear setpoint: '+str(rear_setpoint_)+'Point number:'+str(trajectory_point))
-            if (abs(front_setpoint_) <= 170 and rear_setpoint_ >= -170 and rear_setpoint_ <= -10):                          #Check limits of angular positions
-                lock.acquire()
-                try:
-                    front_setpoint = front_setpoint_
-                    rear_setpoint = rear_setpoint_
-                finally:
-                    lock.release()
-            else:
-                if trajectory_point < len(x_desired) - 1:
-                    trajectory_point = trajectory_point + 1
-                    pm_f.reset(front_setpoint)
-                    pm_r.reset(rear_setpoint)
-                    overshoot_f = -1
-                    overshoot_r = -1
-                    rise_time_f = -1
-                    rise_time_r = -1
-            trajectory_update_timer = threading.Timer(1,trajectory_update)
-            trajectory_update_timer.setDaemon(True)
-            if exit_ is False:
-                trajectory_update_timer.start()
+            timer.start()        
 
         #new rosnode to publish effort messages from script to ros+gazebo control and latch messages
         #from listeners
@@ -225,12 +116,9 @@ if __name__ == '__main__':
 
         timer = threading.Timer(0.01,controller)                                                   #Parallel thread to transmit angular velocities and Plotting graphs parallely
         timer.setDaemon(True)
+        initial_time = time.time()
         timer.start()                                                                           #Start thread
         
-        trajectory_update_timer = threading.Timer(0.005,trajectory_update)
-        trajectory_update_timer.setDaemon(True)
-        trajectory_update_timer.start()
-
         #PID loop
         while not rospy.is_shutdown():
             time.sleep(1)
@@ -247,20 +135,31 @@ if __name__ == '__main__':
                 else:
                     plt_rear_angle.rotate(-1);
                     plt_rear_angle[19] = rear_angle;
+                if(len(plt_x) < 20) :
+                    plt_x.append(global_x);
+                else:
+                    plt_x.rotate(-1);
+                    plt_x[19] = global_x;
+                if(len(plt_y) < 20) :
+                    plt_y.append(global_y);
+                else:
+                    plt_y.rotate(-1);
+                    plt_y[19] = global_y;
 
-                ax.cla()
-                ax.set_xlim([0,20])
-                ax.set_ylim([-180,180])
+                ax[0].cla()
+                ax[0].set_xlim([0,20])
+                ax[0].set_ylim([-150,150])
                 plt_time = [i for i in range(len(plt_front_angle))]
                 plt_front_set_angle = [front_setpoint for i in range(len(plt_front_angle))]
                 plt_rear_set_angle = [rear_setpoint for i in range(len(plt_rear_angle))]
-                ax.plot(plt_time,plt_front_angle,'r',plt_time,plt_rear_angle,'b',
+                ax[0].plot(plt_time,plt_front_angle,'r',plt_time,plt_rear_angle,'b',
                   plt_time,plt_front_set_angle,'r+',plt_time,plt_rear_set_angle,'b+')
-                ax.text(5,150,'Overshoot F = '+str(overshoot_f))
-                ax.text(5,130,'Overshoot R = '+str(overshoot_r))
-                ax.text(5,110,'Rise time F = '+str(rise_time_f))
-                ax.text(5,90,'Rise time R = '+str(rise_time_r))
-                ax.legend(['Front Angle PV','Rear Angle PV', 'Front Angle SP', 'Rear Angle SP'])
+                ax[1].cla()
+                ax[1].set_xlim([0,20])
+                ax[1].set_ylim([0,-1])
+                ax[1].plot(plt_time,plt_x,'r',plt_time,plt_y,'g')
+                ax[0].legend(['Front Angle PV','Rear Angle PV', 'Front Angle SP', 'Rear Angle SP'])
+                ax[1].legend(['X','Y'])
                 plt.pause(0.0000001)
                 pass
             finally:
