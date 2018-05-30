@@ -30,6 +30,7 @@ pi = 3.1415926
 
 front_setpoint = 0
 rear_setpoint = -90
+plt_length = 40
 
 f_topic = '/twolinkman/front_joint_effort_controller/command'                                   #topic name for front joint controller
 r_topic = '/twolinkman/rear_joint_effort_controller/command'                                    #topic name for rear joint controller
@@ -120,7 +121,7 @@ if __name__ == '__main__':
                 model = rospy.ServiceProxy('/gazebo/get_link_state',GetLinkState)
                 obj = model("twolinkman::load_link","world")
                 ros_y = obj.link_state.pose.position.z-1.00
-                ros_x = -(obj.link_state.pose.position.y+0.057904731758301235)
+                ros_x = -(obj.link_state.pose.position.y+0.1)
                 print(ros_x,ros_y)
             finally:
                 lock.release()
@@ -144,64 +145,68 @@ if __name__ == '__main__':
         timer_.setDaemon(True)
         timer_.start()                                                                              #Start thread
         
+        f = open('data.txt','w')
+
         #PID loop
         while not rospy.is_shutdown():
             time.sleep(1)
             lock.acquire()
             try:
                 #Plotting routine
-                if(len(plt_front_angle) < 20) :
+                if(len(plt_front_angle) < plt_length) :
                     plt_front_angle.append(front_setpoint);
                 else:
                     plt_front_angle.rotate(-1);
-                    plt_front_angle[19] = front_setpoint;
-                if(len(plt_rear_angle) < 20) :
+                    plt_front_angle[plt_length-1] = front_setpoint;
+                if(len(plt_rear_angle) < plt_length) :
                     plt_rear_angle.append(rear_setpoint);
                 else:
                     plt_rear_angle.rotate(-1);
-                    plt_rear_angle[19] = rear_setpoint;
+                    plt_rear_angle[plt_length-1] = rear_setpoint;
 
-                if(len(plt_ros_front_angle) < 20) :
+                if(len(plt_ros_front_angle) < plt_length) :
                     plt_ros_front_angle.append(front_angle);
                 else:
                     plt_ros_front_angle.rotate(-1);
-                    plt_ros_front_angle[19] = front_angle;
-                if(len(plt_ros_rear_angle) < 20) :
+                    plt_ros_front_angle[plt_length-1] = front_angle;
+                if(len(plt_ros_rear_angle) < plt_length) :
                     plt_ros_rear_angle.append(rear_angle);
                 else:
                     plt_ros_rear_angle.rotate(-1);
-                    plt_ros_rear_angle[19] = rear_angle;
+                    plt_ros_rear_angle[plt_length-1] = rear_angle;
                 
-                if(len(plt_x) < 20) :
+                if(len(plt_x) < plt_length) :
                     plt_x.append(global_x);
                 else:
                     plt_x.rotate(-1);
-                    plt_x[19] = global_x;
-                if(len(plt_y) < 20) :
+                    plt_x[plt_length-1] = global_x;
+                if(len(plt_y) < plt_length) :
                     plt_y.append(global_y);
                 else:
                     plt_y.rotate(-1);
-                    plt_y[19] = global_y;
+                    plt_y[plt_length-1] = global_y;
 
-                if(len(plt_ros_x) < 20) :
+                if(len(plt_ros_x) < plt_length) :
                     plt_ros_x.append(ros_x);
                 else:
                     plt_ros_x.rotate(-1);
-                    plt_ros_x[19] = ros_x;
-                if(len(plt_ros_y) < 20) :
+                    plt_ros_x[plt_length-1] = ros_x;
+                if(len(plt_ros_y) < plt_length) :
                     plt_ros_y.append(ros_y);
                 else:
                     plt_ros_y.rotate(-1);
-                    plt_ros_y[19] = ros_y;
+                    plt_ros_y[plt_length-1] = ros_y;
 
+                f.write(str(time.time())+' '+str(global_x)+' '+str(global_y)+' '+str(ros_x)+' '+str(ros_y)+' '+
+                    str(front_setpoint)+' '+str(rear_setpoint)+' '+str(front_angle)+' '+str(rear_angle)+'\n')
                 ax[0].cla()
-                ax[0].set_xlim([0,20])
+                ax[0].set_xlim([0,plt_length])
                 ax[0].set_ylim([-150,150])
                 plt_time = [i for i in range(len(plt_front_angle))]
                 ax[0].plot(plt_time,plt_ros_front_angle,'r',plt_time,plt_ros_rear_angle,'b',
                     plt_time,plt_front_angle,'r+',plt_time,plt_rear_angle,'b+')
                 ax[1].cla()
-                ax[1].set_xlim([0,20])
+                ax[1].set_xlim([0,plt_length])
                 ax[1].set_ylim([0,-1])
                 ax[1].plot(plt_time,plt_ros_x,'r',plt_time,plt_ros_y,'b',
                     plt_time,plt_x,'r+',plt_time,plt_y,'b+')
@@ -216,4 +221,5 @@ if __name__ == '__main__':
         rcon_launch.shutdown()
         exit_ = True
         sys.exit()
+        f.close()
         raise Exception('Closing program...')
