@@ -4,8 +4,8 @@ Two Link Manipulator control in ROS with adaptive features using PIDNN
 ## Making dataset
 * If the setup has passed the tests mentioned in the repository main directory 'README' file, you can start collecting dataset for your manipulator model.
 * Run the ```roslauncher.py``` and ```main.py``` scripts in this directory. By default the desired trajectory to trace is:
-'''X = -0.4*(1-np.exp(-0.125*t))```
-```Y = (1-e^(-0.125*t))*-0.4+e^(-0.125*t)*-0.6'''
+```X = -0.4*(1-np.exp(-0.125*t))```
+```Y = (1-e^(-0.125*t))*-0.4+e^(-0.125*t)*-0.6```
 The ```main.py``` scripts ends with a prompt. Enter "RESET" with double quotes and press enter to reposition the Gazebo world to run the simulation iteratively if required.
 * The prompt pops up every 2 seconds.
 * The dynamic reconfiguration of PID parameters can be done using ```rqt```.
