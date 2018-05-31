@@ -4,8 +4,8 @@ Two Link Manipulator control in ROS with adaptive features using PIDNN
 ## Making dataset
 * If the setup has passed the tests mentioned in the repository main directory 'README' file, you can start collecting dataset for your manipulator model.
 * Run the ```roslauncher.py``` and ```main.py``` scripts in this directory. By default the desired trajectory to trace is:
-```X = -0.4*(1-np.exp(-0.125*t))```
-```Y = (1-e^(-0.125*t))*-0.4+e^(-0.125*t)*-0.6```
+```X = -0.4*(1-np.exp(-0.125*t))```  
+```Y = (1-e^(-0.125*t))*-0.4+e^(-0.125*t)*-0.6```  
 The ```main.py``` scripts ends with a prompt. Enter "RESET" with double quotes and press enter to reposition the Gazebo world to run the simulation iteratively if required.
 * The prompt pops up every 2 seconds.
 * The dynamic reconfiguration of PID parameters can be done using ```rqt```.
@@ -16,5 +16,7 @@ The ```main.py``` scripts ends with a prompt. Enter "RESET" with double quotes a
 * If a satisfactory data set is available, you can note it down in a text file named 'train-dataset-xxx', where xxx should be renamed to avoid collisions in with most recently pushed dataset on master branch. Increment a number of latest available dataset by 1.
 * Separate data by single whitespaces and end with a newline (enter) when dataset is complete.
 * Sample is shown in 'train-dataset-001.txt'
-
+* To change the loading of the manipulator, go to the repository directory and open terminal. Type:  
+```gedit twolinkman_description/urdf/twolinkman.xacro```  
+This will open the xacro file of the CAD model. Go to **Line 178 Col 16** Change the value in double quotes to the required mass value in kg.  ```<link name = "load_link"> <mass value = "x" />```  replace x with the load value in kg
 *NOTE*: A more user friendly interface is under development.
