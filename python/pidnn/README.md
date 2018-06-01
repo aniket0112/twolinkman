@@ -19,4 +19,4 @@ The ```main.py``` scripts ends with a prompt. Enter "RESET" with double quotes a
 * To change the loading of the manipulator, go to the repository directory and open terminal. Type:  
 ```gedit twolinkman_description/urdf/twolinkman.xacro```  
 This will open the xacro file of the CAD model. Go to **Line 178 Col 16** Change the value in double quotes to the required mass value in kg.  ```<link name = "load_link"> <mass value = "x" />```  replace x with the load value in kg
-*NOTE*: A more user friendly interface is under development.
+* *NOTE*: A more user friendly interface is under development.
