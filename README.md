@@ -4,7 +4,7 @@ Two Link Manipulator control in ROS
 ## Getting started
 
 ### Prerequisites
-* [ROS Kinetic](http://wiki.ros.org/kinetic/Installation/Ubuntu) with Gazebo-7 (Desktop-Full Install)
+* [ROS Melodic](http://wiki.ros.org/melodic/Installation/Ubuntu) with Gazebo-9 (Desktop-Full Install)
 * [Anaconda](https://www.anaconda.com/download/) with Python 2.7 version
 
 ### Installing
@@ -12,6 +12,9 @@ Two Link Manipulator control in ROS
 * Place the repository folder in ```/your/machine/catkin_ws/src```
 * Navigate into ```catkin_ws``` folder and open terminal.
 * Type ```catkin_make``` and press enter.
+* Make sure your ```.bashrc``` file (located in Home Folder) has these lines added in them:
+```source yourpath/ros/melodic/setup.bash
+source yourpath/catkin_ws/devel/setup.bash```
 * After catkin has completed making the workspace, ROS should be able to locate your new rospackage ```twolinkman```. To check it, type in terminal ```rospack find twolinkman```. This should print out the location of the ```twolinkman_description``` folder.
 If the rospackage location is not displayed, please contact the collaborators.
 
@@ -43,8 +46,8 @@ NOTE : While running the python files, module import errors may occur. Keep inst
 
 ## Built with
 * [SolidWorks](http://www.solidworks.in/Default.htm) - 3D CAD model
-* [ROS Kinetic](http://wiki.ros.org/kinetic) - ROS control node
-* [Gazebo 7](http://gazebosim.org/) - Simulation environment
+* [ROS Meloidc](http://wiki.ros.org/melodic) - ROS control node
+* [Gazebo 9](http://gazebosim.org/) - Simulation environment
 * [Python 2.7](https://anaconda.org/) - Python interface for easy UI
 
 ## Authors
