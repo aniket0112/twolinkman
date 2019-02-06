@@ -13,8 +13,8 @@ Two Link Manipulator control in ROS
 * Navigate into ```catkin_ws``` folder and open terminal.
 * Type ```catkin_make``` and press enter.
 * Make sure your ```.bashrc``` file (located in Home Folder) has these lines added in them:
-```source yourpath/ros/melodic/setup.bash
-source yourpath/catkin_ws/devel/setup.bash```
+```source yourpath/ros/melodic/setup.bash```
+```source yourpath/catkin_ws/devel/setup.bash```
 * After catkin has completed making the workspace, ROS should be able to locate your new rospackage ```twolinkman```. To check it, type in terminal ```rospack find twolinkman```. This should print out the location of the ```twolinkman_description``` folder.
 If the rospackage location is not displayed, please contact the collaborators.
 
